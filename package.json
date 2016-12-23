@@ -1,0 +1,21 @@
+{
+  "name": "@spearwolf/jab",
+  "description": "a smart dependency injection framework for modern javascript apps",
+  "version": "0.0.1",
+  "main": "bundle.js",
+  "scripts": {
+    "test": "mocha --compilers js:babel-core/register"
+  },
+  "author": {
+    "name": "Wolfger Schramm",
+    "email": "wolfger@spearwolf.de",
+    "url": "https://spearwolf.de"
+  },
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-core": "^6.20.0",
+    "babel-preset-env": "^1.1.1",
+    "mocha": "^3.2.0"
+  }
+}
