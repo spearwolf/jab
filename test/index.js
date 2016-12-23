@@ -1,8 +1,8 @@
 import assert from 'assert';
-import { App, SERVICE, COMPONENT } from './src/app';
-import ServiceData from './src/service_data';
-import ServiceHttp from './src/service_http';
-import Foo from './src/foo';
+import { App, SERVICE, COMPONENT } from '../src/app';
+import ServiceData from './service_data';
+import ServiceHttp from './service_http';
+import Foo from './foo';
 
 describe('App', () => {
 
@@ -56,17 +56,12 @@ describe('App', () => {
 
     });
 
-    it('data-service instance should have a http property', () => {
+    it('data-service instance should have a http getter as property', () => {
 
         let data = app.service('data');
 
-        assert(data.http);
+        assert(typeof data.http === 'function');
 
-    });
-
-    it('data-service instance should have access to http service', () => {
-
-        let data = app.service('data');
         let http = data.http();
 
         assert.equal(http.ajax(), 23);
