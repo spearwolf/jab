@@ -48,11 +48,15 @@ describe('App', () => {
 
     });
 
-    it('data-service instance should have an app property', () => {
+    it('data-service instance should have an app getter as property', () => {
 
         let data = app.service('data');
 
-        assert.equal(data.app, app);
+        assert(typeof data.app === 'function');
+
+        let app_ = data.app();
+
+        assert.equal(app_, app);
 
     });
 

@@ -28,28 +28,28 @@ export class App {
 
     service (name) {
 
-        if (name === APP_SERVICE) {
-            return this;
-        }
-
+        //return this.factory(name, SERVICE).then(construct => construct());
         return this.factory(name, SERVICE)();
 
     }
 
     factory (name, type = COMPONENT) {
 
+        let factory;
         if (name === APP_SERVICE) {
-            return this;
+            factory = () => this;
+        } else {
+
+            const factories = this.factories[type];
+            factory = factories.get(name);
+
+            if (factory === undefined) {
+                factory = createFactory(this, name, type);
+                factories.set(name, factory);
+            }
         }
 
-        const factories = this.factories[type];
-        let factory = factories.get(name);
-
-        if (factory === undefined) {
-            factory = createFactory(this, name, type);
-            factories.set(name, factory);
-        }
-
+        //return Promise.resolve(factory);
         return factory;
 
     }
@@ -75,10 +75,6 @@ function addProvider (app, name, provider) {
 }
 
 function createFactory (app, name, type) {
-
-    if (name === APP_SERVICE) {
-        return app;
-    }
 
     let provider = app.providers.get(name);
 
