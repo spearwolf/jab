@@ -31,7 +31,6 @@ export default class App {
         }
 
         return this.factory(name, SERVICE).then(construct => construct());
-        //return this.factory(name, SERVICE)();
 
     }
 
@@ -52,7 +51,6 @@ export default class App {
         }
 
         return Promise.resolve(factory);
-        //return factory;
 
     }
 
