@@ -1,11 +1,9 @@
+import { COMPONENT, SERVICE, APP_SERVICE } from './constants';
+import addProvider from './add_provider';
+import createFactory from './create_factory';
+import annotateProvider from './annotate_provider';
 
-export const COMPONENT = 'component';
-export const SERVICE = 'service';
-
-export const APP_SERVICE = 'app';
-
-
-export class App {
+export default class App {
 
     static Component (provider, options) {
         return annotateProvider(provider, COMPONENT, options);
@@ -28,8 +26,12 @@ export class App {
 
     service (name) {
 
-        //return this.factory(name, SERVICE).then(construct => construct());
-        return this.factory(name, SERVICE)();
+        if (name === APP_SERVICE) {
+            return Promise.resolve(this);
+        }
+
+        return this.factory(name, SERVICE).then(construct => construct());
+        //return this.factory(name, SERVICE)();
 
     }
 
@@ -49,95 +51,10 @@ export class App {
             }
         }
 
-        //return Promise.resolve(factory);
-        return factory;
+        return Promise.resolve(factory);
+        //return factory;
 
     }
 
-}
-
-
-function addProvider (app, name, provider) {
-
-    let providers = app.providers;
-    if (providers === undefined) {
-        app.providers = providers = new Map;
-    }
-
-    let provDef = providers.get(name);
-    if (provDef === undefined) {
-        provDef = {};
-        providers.set(name, provDef);
-    }
-
-    provDef[provider.componentType || SERVICE] = provider;
-
-}
-
-function createFactory (app, name, type) {
-
-    let provider = app.providers.get(name);
-
-    if (!provider) {
-        throw new Error(`unknown provider: ${name}`);
-    }
-
-    provider = provider[type];
-
-    if (!provider) {
-        throw new Error(`unknown ${type} provider: ${name}`);
-    }
-
-    switch (type) {
-        case SERVICE:
-            return createServiceFactory(app, name, provider);
-        case COMPONENT:
-            return createComponentFactory(app, provider);
-        default:
-            throw new Error(`invalid provider type: ${type}`);
-    }
-
-}
-
-function createServiceFactory (app, name, provider) {
-    return function () {
-
-        let instance = app.services.get(name);
-
-        if (instance === undefined) {
-            instance = constructComponent(app, provider);
-            app.services.set(name, instance);
-        }
-
-        return instance;
-    }
-}
-
-function createComponentFactory (app, provider) {
-    return () => constructComponent(app, provider);
-}
-
-function constructComponent (app, provider) {
-    let instance;
-    let args;
-
-    if (provider.inject) {
-        args = provider.inject().map((name) => app.factory(name, SERVICE));
-        instance = Reflect.construct(provider, args);
-    } else {
-        instance = new provider;
-    }
-
-    return instance;
-}
-
-function annotateProvider (provider, componentType, options) {
-    provider.componentType = componentType;
-    if (options) {
-        if (Array.isArray(options.inject)) {
-            provider.inject = () => options.inject;
-        }
-    }
-    return provider;
 }
 

@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { App, SERVICE, COMPONENT } from '../src/app';
+import { App, SERVICE, COMPONENT } from '../src';
 import ServiceData from './service_data';
 import ServiceHttp from './service_http';
 import Foo from './foo';
@@ -20,55 +20,63 @@ describe('App', () => {
 
     it('should return a service instance', () => {
 
-        let data = app.service('data');
+        return app.service('data').then((data) => {
 
-        assert(data instanceof ServiceData);
+            assert(data instanceof ServiceData);
+
+        });
 
     });
 
     it('default provider type is service', () => {
 
-        let foo = app.service('foo');
-        assert(foo instanceof Foo);
-        assert.throws(() => app.factory('foo', COMPONENT));
+        return app.service('foo').then((foo) => {
+
+            assert(foo instanceof Foo);
+            assert.throws(() => app.factory('foo', COMPONENT));
+
+        });
 
     });
 
     it('service instances are singletons', () => {
 
-        let a = app.service('data');
-        let b = app.service('data');
-        let c = app.service('data');
+        let _a = app.service('data');
+        let _b = app.service('data');
+        let _c = app.service('data');
 
-        assert(a instanceof ServiceData);
-        assert(b instanceof ServiceData);
-        assert(c instanceof ServiceData);
-        assert(a === b);
-        assert(a === c);
+        return Promise.all([_a, _b, _c]).then((services) => {
+
+            let [a, b, c] = services;
+
+            assert(a instanceof ServiceData, 'a instanceof ServiceData');
+            assert(b instanceof ServiceData, 'b instanceof ServiceData');
+            assert(c instanceof ServiceData, 'c instanceof ServiceData');
+            assert(a === b, 'a === b');
+            assert(a === c, 'a === c');
+
+        });
 
     });
 
     it('data-service instance should have an app getter as property', () => {
 
-        let data = app.service('data');
+        return app.service('data').then((data) => {
 
-        assert(typeof data.app === 'function');
+            assert.equal(data.app, app);
 
-        let app_ = data.app();
-
-        assert.equal(app_, app);
+        });
 
     });
 
     it('data-service instance should have a http getter as property', () => {
 
-        let data = app.service('data');
+        return app.service('data').then((data) => {
 
-        assert(typeof data.http === 'function');
+            assert(data.http instanceof ServiceHttp, 'data.http instanceof ServiceHttp');
+            assert.equal(data.http.ajax(), 23);
 
-        let http = data.http();
-
-        assert.equal(http.ajax(), 23);
+        });
 
     });
 

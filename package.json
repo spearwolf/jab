@@ -1,8 +1,10 @@
 {
   "name": "@spearwolf/jab",
-  "description": "a smart dependency injection framework for modern javascript apps",
-  "version": "0.0.1",
+  "description": "a smart and async dependency injection framework for modern javascript apps",
+  "version": "0.0.2",
   "main": "bundle.js",
+  "jsnext:main": "src/index.js",
+  "module": "src/index.js",
   "scripts": {
     "test": "mocha --compilers js:babel-core/register"
   },
