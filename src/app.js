@@ -24,21 +24,27 @@ export default class App {
         }
     }
 
+    /**
+     * @return a promise which resolves to a service instance
+     */
     service (name) {
 
         if (name === APP_SERVICE) {
-            return Promise.resolve(this);
+            return this;
         }
 
-        return this.factory(name, SERVICE).then(construct => construct());
+        return this.factory(name, SERVICE)();
 
     }
 
+    /**
+     * @return a function which returns a promise which resolves itself into a component
+     */
     factory (name, type = COMPONENT) {
 
         let factory;
         if (name === APP_SERVICE) {
-            factory = () => this;
+            factory = this;
         } else {
 
             const factories = this.factories[type];
@@ -50,7 +56,7 @@ export default class App {
             }
         }
 
-        return Promise.resolve(factory);
+        return factory;
 
     }
 
