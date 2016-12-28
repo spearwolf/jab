@@ -90,7 +90,7 @@ describe('App', () => {
 
     });
 
-    it('data-service instance should have an app getter as property', () => {
+    it('data-service instance should have the app reference as property', () => {
 
         return app.service('data').then((data) => {
 
@@ -100,7 +100,7 @@ describe('App', () => {
 
     });
 
-    it('data-service instance should have a http getter as property', () => {
+    it('data-service instance should have the http-service as property', () => {
 
         return app.service('data').then((data) => {
 
@@ -124,7 +124,7 @@ describe('App', () => {
 
     });
 
-    it('service initialization order', () => {
+    it('initialization order: services are lazy', () => {
 
         return app.service('a').then(a => {
 
