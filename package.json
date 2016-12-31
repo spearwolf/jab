@@ -1,12 +1,12 @@
 {
   "name": "@spearwolf/jab",
   "description": "a smart and async dependency injection framework for modern javascript apps",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "bundle.js",
   "jsnext:main": "src/index.js",
   "module": "src/index.js",
   "scripts": {
-    "test": "mocha --compilers js:babel-core/register"
+    "test": "mocha --compilers js:babel-core/register test/test_*.js"
   },
   "author": {
     "name": "Wolfger Schramm",

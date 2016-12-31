@@ -4,43 +4,12 @@ import ServiceData from './service_data';
 import ServiceHttp from './service_http';
 import Foo from './foo';
 
-let testValues = [];
-
-class ServiceA {
-    constructor (b) {
-        this.b = b;
-        testValues.push('a');
-    }
-    foo () {
-        return this.b().then((b) => {
-            testValues.push('d');
-            return b;
-        });
-    }
-}
-
-App.Service(ServiceA, { inject: ['b'] });
-
-class ServiceB {
-    constructor () {
-        testValues.push('b');
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                testValues.push('c');
-                resolve(this);
-            }, 16);
-        });
-    }
-}
-
-describe('App', () => {
+describe('Test App', () => {
 
     let app = new App({
         'data': ServiceData,
         'http': ServiceHttp,
         'foo': Foo,
-        'a': ServiceA,
-        'b': ServiceB
     });
 
     it('should have some service providers', () => {
@@ -121,24 +90,6 @@ describe('App', () => {
 
         assert.throws(() => app.factory('xyz126', SERVICE));
         assert.throws(() => app.factory('xyz127', COMPONENT));
-
-    });
-
-    it('initialization order: services are lazy', () => {
-
-        return app.service('a').then(a => {
-
-            assert.equal(testValues.length, 1);
-            assert.equal(testValues[0], 'a');
-
-            return a.foo().then(() => {
-                assert.equal(testValues.length, 4);
-                assert.equal(testValues[1], 'b');
-                assert.equal(testValues[2], 'c');
-                assert.equal(testValues[3], 'd');
-            });
-
-        });
 
     });
 
