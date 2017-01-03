@@ -3,34 +3,34 @@ import constructComponent from './construct_component';
 
 export default function createFactory (app, name, type) {
 
-    let provider = app.providers.get(name, type);
+    let provider = app.provider.get(name, type);
 
     switch (type) {
         case SERVICE:
-            return createServiceFactory(app, name, provider);
+            return createServiceFactory(name, provider);
         case COMPONENT:
-            return createComponentFactory(app, provider);
+            return createComponentFactory(provider);
         default:
             throw new Error(`invalid provider type: ${type}`);
     }
 
 }
 
-function createServiceFactory (app, name, provider) {
+function createServiceFactory (name, provider) {
     return function () {
 
-        let instance = app.services.get(name);
+        let instance = provider.app.services.get(name);
 
         if (instance === undefined) {
-            instance = constructComponent(app, provider);
-            app.services.set(name, instance);
+            instance = constructComponent(provider);
+            provider.app.services.set(name, instance);
         }
 
         return instance;
     }
 }
 
-function createComponentFactory (app, provider) {
-    return () => constructComponent(app, provider);
+function createComponentFactory (provider) {
+    return () => constructComponent(provider);
 }
 

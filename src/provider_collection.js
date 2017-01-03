@@ -1,26 +1,33 @@
-import { SERVICE } from './constants';
+import { SERVICE, COMPONENT_TYPE } from './constants';
 
 export default class ProviderCollection {
 
-    constructor (parent) {
+    constructor (app, parent) {
+        this.app = app;
         this.parent = parent || null;
-        this.providers = new Map;
+        this.provider = new Map;
     }
 
     add (name, provider) {
-        let provDef = this.providers.get(name);
+        let provDef = this.provider.get(name);
         if (provDef === undefined) {
             provDef = {};
-            this.providers.set(name, provDef);
+            this.provider.set(name, provDef);
         }
 
-        provDef[provider.componentType || SERVICE] = provider;
+        provDef[provider[COMPONENT_TYPE] || SERVICE] = provider;
+    }
+
+    addProviders (provider) {
+        if (typeof provider === 'object') {
+            Object.keys(provider).forEach((name) => this.add(name, provider[name]));
+        }
     }
 
     get (name, type) {
 
         const isRoot = this.parent === null;
-        let provider = this.providers.get(name);
+        let provider = this.provider.get(name);
 
         if (!provider) {
             if (isRoot) {
@@ -40,7 +47,10 @@ export default class ProviderCollection {
             }
         }
 
-        return provider;
+        return {
+            app: this.app,
+            provider
+        };
 
     }
 

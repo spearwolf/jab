@@ -7,16 +7,16 @@ import Foo from './foo';
 describe('Test App', () => {
 
     let app = new App({
-        providers: {
+        provider: {
             'data': ServiceData,
             'http': ServiceHttp,
             'foo': Foo,
         }
     });
 
-    it('should have some service providers', () => {
+    it('should have some service provider', () => {
 
-        assert.equal(ServiceData, app.providers.get('data', SERVICE));
+        assert.equal(ServiceData, app.provider.get('data', SERVICE).provider);
 
     });
 

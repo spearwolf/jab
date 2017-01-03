@@ -19,12 +19,11 @@ export default class App {
             [COMPONENT]: new Map,
             [SERVICE]: new Map
         };
-        this.providers = new ProviderCollection;
-        if (options != null) {
-            const providers = options.providers;
-            if (typeof providers === 'object') {
-                Object.keys(providers).forEach((name) => this.providers.add(name, providers[name]));
-            }
+        const hasOptions = options != null;
+        this.parent = hasOptions && options.parent ? options.parent : null;
+        this.provider = new ProviderCollection(this, this.parent && this.parent.provider);
+        if (hasOptions) {
+            this.provider.addProviders(options.provider);
         }
     }
 

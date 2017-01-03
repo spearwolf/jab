@@ -33,7 +33,7 @@ class ServiceB {
 describe('Initialization order', () => {
 
     let app = new App({
-        providers: {
+        provider: {
             'a': ServiceA,
             'b': ServiceB
         }
