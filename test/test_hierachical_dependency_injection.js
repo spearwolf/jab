@@ -108,6 +108,18 @@ describe('Hierachical provider dependency injection example', () => {
 
     });
 
+    it('service :a and :d.x should be different instances of ServiceA', () => {
+
+        return Promise.all([
+            app.service('a'),
+            app.service('d').then(d => d.app.service('x'))
+        ]).then(s => {
+            assert.notEqual(s[0], s[1], 'a and d.x should NOT be the same instance');
+            assert(s[0] instanceof ServiceA, 'a should be instance of ServiceA');
+            assert(s[1] instanceof ServiceA, 'd.x should be instance of ServiceA');
+        });
+
+    });
 
 });
 
