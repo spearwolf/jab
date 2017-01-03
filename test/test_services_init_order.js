@@ -33,8 +33,10 @@ class ServiceB {
 describe('Initialization order', () => {
 
     let app = new App({
-        'a': ServiceA,
-        'b': ServiceB
+        providers: {
+            'a': ServiceA,
+            'b': ServiceB
+        }
     });
 
     it('service getters should be lazy evaluated', () => {

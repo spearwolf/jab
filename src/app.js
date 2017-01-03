@@ -13,15 +13,18 @@ export default class App {
         return annotateProvider(provider, SERVICE, options);
     }
 
-    constructor (providers) {
+    constructor (options) {
         this.services = new Map;
         this.factories = {
             [COMPONENT]: new Map,
             [SERVICE]: new Map
         };
         this.providers = new ProviderCollection;
-        if (providers) {
-            Object.keys(providers).forEach((name) => this.providers.add(name, providers[name]));
+        if (options != null) {
+            const providers = options.providers;
+            if (typeof providers === 'object') {
+                Object.keys(providers).forEach((name) => this.providers.add(name, providers[name]));
+            }
         }
     }
 

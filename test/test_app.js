@@ -7,9 +7,11 @@ import Foo from './foo';
 describe('Test App', () => {
 
     let app = new App({
-        'data': ServiceData,
-        'http': ServiceHttp,
-        'foo': Foo,
+        providers: {
+            'data': ServiceData,
+            'http': ServiceHttp,
+            'foo': Foo,
+        }
     });
 
     it('should have some service providers', () => {
