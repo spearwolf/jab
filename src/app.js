@@ -1,7 +1,7 @@
 import { COMPONENT, SERVICE, APP_SERVICE } from './constants';
-import addProvider from './add_provider';
 import createFactory from './create_factory';
 import annotateProvider from './annotate_provider';
+import ProviderCollection from './provider_collection';
 
 export default class App {
 
@@ -19,8 +19,9 @@ export default class App {
             [COMPONENT]: new Map,
             [SERVICE]: new Map
         };
+        this.providers = new ProviderCollection;
         if (providers) {
-            Object.keys(providers).forEach((name) => addProvider(this, name, providers[name]));
+            Object.keys(providers).forEach((name) => this.providers.add(name, providers[name]));
         }
     }
 

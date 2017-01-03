@@ -14,7 +14,7 @@ describe('Test App', () => {
 
     it('should have some service providers', () => {
 
-        assert.equal(ServiceData, app.providers.get('data')[SERVICE]);
+        assert.equal(ServiceData, app.providers.get('data', SERVICE));
 
     });
 

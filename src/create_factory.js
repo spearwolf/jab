@@ -3,17 +3,7 @@ import constructComponent from './construct_component';
 
 export default function createFactory (app, name, type) {
 
-    let provider = app.providers.get(name);
-
-    if (!provider) {
-        throw new Error(`unknown provider: ${name}`);
-    }
-
-    provider = provider[type];
-
-    if (!provider) {
-        throw new Error(`unknown ${type} provider: ${name}`);
-    }
+    let provider = app.providers.get(name, type);
 
     switch (type) {
         case SERVICE:
