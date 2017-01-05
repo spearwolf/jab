@@ -17,13 +17,14 @@ export default function createFactory (app, name, type) {
 }
 
 function createServiceFactory (name, provider) {
-    return function () {
+    return () => {
 
-        let instance = provider.app.services.get(name);
+        const services = provider.app.services;
+        let instance = services.get(name);
 
         if (instance === undefined) {
             instance = constructComponent(provider);
-            provider.app.services.set(name, instance);
+            services.set(name, instance);
         }
 
         return instance;
