@@ -4,19 +4,52 @@ import ServiceData from './service_data';
 import ServiceHttp from './service_http';
 import Foo from './foo';
 
-describe('Test App', () => {
+class Bar { }
+App.Component(Bar);
+
+class Plah {
+    constructor (secret) {
+        this.secret = secret();
+    }
+}
+App.Component(Plah, { inject: ['secret'] });
+
+describe('App', () => {
 
     let app = new App({
         provider: {
             'data': ServiceData,
             'http': ServiceHttp,
             'foo': Foo,
+            'bar': Bar,
+            'plah': Plah,
         }
     });
 
-    it('should have some service provider', () => {
+    it('should have some service providers', () => {
 
-        assert.equal(ServiceData, app.provider.get('data', SERVICE).provider);
+        assert.equal(ServiceData, app.providers.get('data', SERVICE).provider);
+
+    });
+
+    it('should create a component entity', () => {
+
+        return app.createEntity('bar').then((b) => {
+
+            assert(b instanceof Bar);
+
+        });
+
+    });
+
+    it('should create a component entity with extra options', () => {
+
+        return app.createEntity('plah', { secret: 999 }).then((p) => {
+
+            assert(p instanceof Plah);
+            assert.equal(p.secret, 999);
+
+        });
 
     });
 

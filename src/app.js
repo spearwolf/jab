@@ -6,11 +6,19 @@ import ProviderCollection from './provider_collection';
 export default class App {
 
     static Component (provider, options) {
-        return annotateProvider(provider, COMPONENT, options);
+        if (typeof provider === 'function') {
+            return annotateProvider(provider, COMPONENT, options);
+        } else {
+            throw new Error('Component(..) needs a constructor/function as first parameter!');
+        }
     }
 
     static Service (provider, options) {
-        return annotateProvider(provider, SERVICE, options);
+        if (typeof provider === 'function') {
+            return annotateProvider(provider, SERVICE, options);
+        } else {
+            throw new Error('Service(..) needs a constructor/function as first parameter!');
+        }
     }
 
     constructor (options) {
@@ -21,9 +29,9 @@ export default class App {
         };
         const hasOptions = options != null;
         this.parent = hasOptions && options.parent ? options.parent : null;
-        this.provider = new ProviderCollection(this, this.parent && this.parent.provider);
+        this.providers = new ProviderCollection(this, this.parent && this.parent.providers);
         if (hasOptions) {
-            this.provider.addProviders(options.provider);
+            this.providers.addProviders(options.provider);
         }
     }
 
@@ -37,6 +45,12 @@ export default class App {
         }
 
         return this.factory(name, SERVICE)();
+
+    }
+
+    createEntity (name, options) {
+
+        return Promise.resolve(this.factory(name, COMPONENT)(options));
 
     }
 

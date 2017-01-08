@@ -1,9 +1,9 @@
 import { COMPONENT, SERVICE } from './constants';
-import constructComponent from './construct_component';
+import constructEntity from './construct_entity';
 
 export default function createFactory (app, name, type) {
 
-    let provider = app.provider.get(name, type);
+    const provider = app.providers.get(name, type);
 
     switch (type) {
         case SERVICE:
@@ -23,7 +23,7 @@ function createServiceFactory (name, provider) {
         let instance = services.get(name);
 
         if (instance === undefined) {
-            instance = constructComponent(provider);
+            instance = constructEntity(provider);
             services.set(name, instance);
         }
 
@@ -32,6 +32,6 @@ function createServiceFactory (name, provider) {
 }
 
 function createComponentFactory (provider) {
-    return () => constructComponent(provider);
+    return constructEntity.bind(null, provider);
 }
 

@@ -5,29 +5,32 @@ export default class ProviderCollection {
     constructor (app, parent) {
         this.app = app;
         this.parent = parent || null;
-        this.provider = new Map;
+        this.providers = new Map;
     }
 
     add (name, provider) {
-        let provDef = this.provider.get(name);
+        let provDef = this.providers.get(name);
         if (provDef === undefined) {
             provDef = {};
-            this.provider.set(name, provDef);
+            this.providers.set(name, provDef);
         }
 
         provDef[provider[COMPONENT_TYPE] || SERVICE] = provider;
     }
 
-    addProviders (provider) {
-        if (typeof provider === 'object') {
-            Object.keys(provider).forEach((name) => this.add(name, provider[name]));
+    addProviders (providers) {
+        if (!providers) return;
+        if (Array.isArray(providers)) {
+            providers.forEach(this.addProviders.bind(this));
+        } else if (typeof providers === 'object') {
+            Object.keys(providers).forEach((name) => this.add(name, providers[name]));
         }
     }
 
     get (name, type) {
 
         const isRoot = this.parent === null;
-        let provider = this.provider.get(name);
+        let provider = this.providers.get(name);
 
         if (!provider) {
             if (isRoot) {
