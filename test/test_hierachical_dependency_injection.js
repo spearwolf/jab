@@ -71,6 +71,7 @@ describe('Hierachical provider dependency injection example', () => {
             app.service('d').then(d => d.app.service('c'))
         ]).then(s => {
             assert.equal(s[0], s[1]);
+            assert.equal(s[1], s[2]);
         });
 
     });
