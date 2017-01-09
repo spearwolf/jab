@@ -24,7 +24,8 @@ Usage Example (*work in progress*):
         provider: {  // our component has some extra providers which are not defined in the App
                      // providers are hierachical so they can override providers with same name from the App
 
-            data: () => fetch('https://example.com/123.json')   // a function which returns a Promise can be used a provider!
+            data: () => fetch('https://example.com/123.json')   // a function which returns a Promise
+                                                                // can be used a provider!
 
         }
 
@@ -32,7 +33,7 @@ Usage Example (*work in progress*):
 
 
     class Plah { }
-    // no annotation here!
+    // no annotations here!
     // without any annotations a class will be act as Service (which is a Compoment singelton)
 
     class Bar {
@@ -42,7 +43,7 @@ Usage Example (*work in progress*):
             return new Promise(resolve => setTimeout(resolve(this), 4));
         }
         // ooops, our constructor returns a Promise!
-        // this will tell our App and wait the Service initialization until the Promise
+        // this will tell our App to wait for the Service initialization until the Promise
         // is resolved (with an instance of Bar as value)
     }
 
