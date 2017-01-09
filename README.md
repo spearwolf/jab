@@ -15,7 +15,7 @@ Usage Example (*work in progress*):
     App.Component(Foo, {  // a Component is like an ordinary class, you can create multiple entities from it
                           // (an entity is a instance of a Component)
 
-        construct: ['plah', 'data!'],  // define the arguments for the Foo constructor
+        construct: ['plah', 'data!'],  // specify the arguments for the Foo constructor
                                        // data has an exclamation mark, so the construction of Foo will be delayed
                                        // until 'data' is resolved
 
@@ -36,9 +36,14 @@ Usage Example (*work in progress*):
     // without any annotations a class will be act as Service (which is a Compoment singelton)
 
     class Bar {
-        constructor (foo) {
-            this.foo = foo;
+        constructor (parent) {
+            this.foo = parent;
+
+            return new Promise(resolve => setTimeout(resolve(this), 4));
         }
+        // ooops, our constructor returns a Promise!
+        // this will tell our App and wait the Service initialization until the Promise
+        // is resolved (with an instance of Bar as value)
     }
 
     App.Service(Bar, { construct: ['parent'] });  // Foo asks for 'bar' after object creation,
@@ -61,7 +66,9 @@ Usage Example (*work in progress*):
 
         console.log(foo.data);  // log json data
 
-        console.log(foo.bar);  // this a Bar entity, which has a reference to foo, so foo.bar.foo === foo
+        foo.bar().then(bar => {  // initialize Service Bar
+            // do something fantastic with bar
+        });
 
     });
 
