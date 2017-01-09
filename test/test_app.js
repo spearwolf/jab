@@ -9,10 +9,11 @@ App.Component(Bar);
 
 class Plah {
     constructor (secret) {
-        this.secret = secret();
+        //this.secret = secret();
+        this.secret = secret;
     }
 }
-App.Component(Plah, { inject: ['secret'] });
+App.Component(Plah, { inject: ['secret!'] });
 
 describe('App', () => {
 

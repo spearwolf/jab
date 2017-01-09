@@ -2,7 +2,6 @@ import { COMPONENT, SERVICE, APP_SERVICE } from './constants';
 import createFactory from './create_factory';
 import annotateProvider from './annotate_provider';
 import ProviderCollection from './provider_collection';
-import hasExclamationMark from './has_exclamation_mark';
 
 export default class App {
 
@@ -49,6 +48,9 @@ export default class App {
 
     }
 
+    /**
+     * @return a promise which resolves to a new entity (which is an instance of a component)
+     */
     createEntity (name, options) {
 
         return Promise.resolve(this.factory(name, COMPONENT)(options));
@@ -58,10 +60,7 @@ export default class App {
     /**
      * @return a function which returns a promise which resolves itself into a component
      */
-    factory (providerName, type = COMPONENT) {
-
-        const isExclamized = hasExclamationMark(providerName);
-        const name = isExclamized ? providerName.substring(providerName.length - 1) : providerName;
+    factory (name, type = COMPONENT) {
 
         let factory;
         if (name === APP_SERVICE) {

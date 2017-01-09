@@ -30,12 +30,35 @@ class ServiceB {
     }
 }
 
+class ServiceC {
+    constructor (d) {
+        this.d = d;
+        testValues.push('g');
+    }
+}
+
+App.Service(ServiceC, { inject: ['d!'] });
+
+class ServiceD {
+    constructor () {
+        testValues.push('e');
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                testValues.push('f');
+                resolve(this);
+            }, 16);
+        });
+    }
+}
+
 describe('Initialization order', () => {
 
     let app = new App({
         provider: {
             'a': ServiceA,
-            'b': ServiceB
+            'b': ServiceB,
+            'c': ServiceC,
+            'd': ServiceD
         }
     });
 
@@ -51,9 +74,17 @@ describe('Initialization order', () => {
                 assert.equal(testValues[1], 'b');
                 assert.equal(testValues[2], 'c');
                 assert.equal(testValues[3], 'd');
+
             });
 
-        });
+        }).then(() => app.service('c').then(() => {
+
+            assert.equal(testValues.length, 7);
+            assert.equal(testValues[4], 'e');
+            assert.equal(testValues[5], 'f');
+            assert.equal(testValues[6], 'g');
+
+        }));
 
     });
 
