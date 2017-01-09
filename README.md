@@ -12,15 +12,19 @@ Usage Example (*work in progress*):
 
     }
 
-    App.Component(Foo, {
+    App.Component(Foo, {  // a Component is like an ordinary class, you can create multiple entities from it
+                          // (an entity is a instance of a Component)
 
-        construct: ['plah', 'data!'],
+        construct: ['plah', 'data!'],  // define the arguments for the Foo constructor
+                                       // data has an exclamation mark, so the construction of Foo will be delayed
+                                       // until 'data' is resolved
 
-        inject: ['bar'],
+        inject: ['bar'],  // after object creation, add more properties to our new object
 
-        provider: {
+        provider: {  // our component has some extra providers which are not defined in the App
+                     // providers are hierachical so they can override providers with same name from the App
 
-            data: () => fetch('https://example.com/123.json')
+            data: () => fetch('https://example.com/123.json')   // a function which returns a Promise can be used a provider!
 
         }
 
@@ -28,7 +32,8 @@ Usage Example (*work in progress*):
 
 
     class Plah { }
-
+    // no annotation here!
+    // without any annotations a class will be act as Service (which is a Compoment singelton)
 
     class Bar {
         constructor (foo) {
@@ -36,7 +41,8 @@ Usage Example (*work in progress*):
         }
     }
 
-    App.Service(Bar, { construct: ['parent'] });
+    App.Service(Bar, { construct: ['parent'] });  // Foo asks for 'bar' after object creation,
+                                                  // so *parent* will be an instance of Foo in this case.
 
 
     const app = new App({
@@ -50,12 +56,12 @@ Usage Example (*work in progress*):
     app.createEntity('foo').then(foo => {
 
         foo.plah().then(plah => {
-            // do someethig with service plah
+            // do something with service plah
         });
 
         console.log(foo.data);  // log json data
 
-        console.log(foo.bar);
+        console.log(foo.bar);  // this a Bar entity, which has a reference to foo, so foo.bar.foo === foo
 
     });
 
