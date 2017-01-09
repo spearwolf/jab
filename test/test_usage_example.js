@@ -26,7 +26,7 @@ describe('Usage Example', () => {
         provider: {  // our component has some extra providers which are not defined in the App
                      // providers are hierachical so they can override providers with same name from the App
 
-            data: fetch('https://example.com/123.json')   // every Promise can be used a provider!
+            data: fetch('https://example.com/123.json')   // every Promise can be used as provider!
 
         }
 
