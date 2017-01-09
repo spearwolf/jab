@@ -1,7 +1,9 @@
+import assert from 'assert';
+import { App } from '../src';
 
-Usage Example (*work in progress*):
+const fetch = (url) => Promise.resolve({ url });
 
-```javascript
+describe('Usage Example', () => {
 
     class Foo {
 
@@ -15,11 +17,11 @@ Usage Example (*work in progress*):
     App.Component(Foo, {  // a Component is like an ordinary class, you can create multiple entities from it
                           // (an entity is a instance of a Component)
 
-        construct: ['plah', 'data!'],  // specify the arguments for the Foo constructor
+        inject: ['plah', 'data!'],  // specify the arguments for the Foo constructor
                                        // data has an exclamation mark, so the construction of Foo will be delayed
                                        // until 'data' is resolved
 
-        inject: ['bar'],  // after object creation, add more properties to our new object
+        //inject: ['bar'],  // after object creation, add more properties to our new object
 
         provider: {  // our component has some extra providers which are not defined in the App
                      // providers are hierachical so they can override providers with same name from the App
@@ -54,23 +56,40 @@ Usage Example (*work in progress*):
         provider: {
             foo: Foo,
             plah: Plah,
-            bar: Bar,
+            //bar: Bar,
         }
     });
 
-    app.createEntity('foo').then(foo => {
+    it('create entity foo', () => app.createEntity('foo')
+        .then(foo => {
 
-        foo.plah().then(plah => {
-            // do something with service plah
-        });
+            assert(foo instanceof Foo);
 
-        console.log(foo.data);  // log json data
+            return foo;
+        })
+        .then(foo => {
 
-        foo.bar().then(bar => {  // initialize Service Bar
-            // do something fantastic with bar
-        });
+            assert.equal(typeof foo.plah, 'function');
 
-    });
+            return foo.plah().then(plah => {
 
-```
+                assert(plah instanceof Plah);
 
+                return foo;
+            });
+        })
+        .then(foo => {
+
+            assert.equal(foo.data && foo.data.url, 'https://example.com/123.json');
+
+            return foo;
+        })
+        //.then(foo => {
+            //assert.equal(typeof foo.bar, 'function');
+            //return foo.bar().then(bar => {
+                //assert(bar instanceof Bar);
+            //});
+        //})
+    );
+
+});
