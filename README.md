@@ -15,13 +15,13 @@ Usage Example (*work in progress*):
     App.Component(Foo, {  // a Component is like an ordinary class, you can create multiple entities from it
                           // (an entity is a instance of a Component)
 
-        construct: ['plah', 'data!'],  // specify the arguments for the Foo constructor
+        construct: ['plah', 'data!'],  // define the services which shall be used as arguments for Foo constructor
                                        // data has an exclamation mark, so the construction of Foo will be delayed
                                        // until 'data' is resolved
 
-        inject: ['bar'],  // after object creation, add more properties to our new object
+        inject: ['bar'],  // after object creation, add (create) these Components as properties to our object
 
-        provider: {  // our component has some extra providers which are not defined in the App
+        provider: {  // our Component has some extra providers which are not defined in the App
                      // providers are hierachical so they can override providers with same name from the App
 
             data: fetch('https://example.com/123.json')   // every Promise can be used as provider!
