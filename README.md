@@ -12,19 +12,21 @@ Usage Example (*work in progress*):
 
     }
 
-    App.Component(Foo, {  // a Component is like an ordinary class, you can create multiple entities from it
-                          // (an entity is a instance of a Component)
+    App.Component(Foo, {  // A Component is like an ordinary class, you can create multiple entities from it
+                          // (an Entity is an instance of a Component)
 
-        construct: ['plah', 'data!'],  // define the services which shall be used as arguments for Foo constructor
+        construct: ['plah', 'data!'],  // Define the services which shall be used as arguments for Foo constructor
                                        // data has an exclamation mark, so the construction of Foo will be delayed
                                        // until 'data' is resolved
 
-        inject: ['bar'],  // after object creation, add (create) these Components as properties to our object
+        inject: ['bar'],  // After object creation, add (create) these Components as properties to our object
+        
+        // Remember: construct services & inject components
 
         provider: {  // our Component has some extra providers which are not defined in the App
                      // providers are hierachical so they can override providers with same name from the App
 
-            data: fetch('https://example.com/123.json')   // every Promise can be used as provider!
+            data: fetch('https://example.com/123.json')   // Every Promise can be used as provider!
 
         }
 
@@ -42,8 +44,8 @@ Usage Example (*work in progress*):
             return new Promise(resolve => setTimeout(resolve(this), 4));
         }
         // ooops, our constructor returns a Promise!
-        // this will tell our App to wait for the Service initialization until the Promise
-        // is resolved (with an instance of Bar as value)
+        // this will tell our App to wait for the Service initialization until
+        // the Promise is resolved (with an instance of Bar as value)
     }
 
     App.Service(Bar, { construct: ['parent'] });  // Foo asks for 'bar' after object creation,
