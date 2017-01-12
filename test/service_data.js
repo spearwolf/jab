@@ -22,6 +22,6 @@ async function init (service, http) {
 
 export default App.Service(
     ServiceData, {
-        inject: ['app', 'http']
+        construct: ['app', 'http']
     });
 

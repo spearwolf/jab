@@ -1,6 +1,25 @@
 import App from './app';
-import { SERVICE, INJECT, PROVIDER } from './constants';
+import { PARENT_SERVICE, SERVICE, COMPONENT, CONSTRUCT, INJECT, PROVIDER } from './constants';
 import hasExclamationMark from './has_exclamation_mark';
+
+const getPlainName = name => name === PARENT_SERVICE ? name : name.substring(0, name.length - 1);
+const isExclamizedName = (name) => hasExclamationMark(name) || name === PARENT_SERVICE;
+
+const waitForAndCallFactories = (providers, getFactory, extraOptions) =>
+    providers
+        .map(providerName => {
+            const name = hasExclamationMark(providerName) ? getPlainName(providerName) : providerName;
+            let factory = getFactory(name);
+            if (typeof factory === 'function') {
+                factory = factory(extraOptions);
+            }
+            return Promise.resolve(factory).then(value => {
+                return {
+                    providerName,
+                    value
+                };
+            });
+        });
 
 export default function constructEntity (provider, extraProviders) {
 
@@ -9,49 +28,33 @@ export default function constructEntity (provider, extraProviders) {
 
     if (typeof _provider === 'function') {
 
-        if (_provider[INJECT]) {
+        const app = _provider[PROVIDER] || extraProviders ? new App({
+            parent: provider.app,
+            provider: [_provider[PROVIDER], extraProviders]
+        }) : provider.app;
 
-            const app = _provider[PROVIDER] || extraProviders ? new App({
-                parent: provider.app,
-                provider: [_provider[PROVIDER], extraProviders]
-            }) : provider.app;
+        const initializedServices = {};
 
-            const getServiceFactory = name => app.factory(name, SERVICE, extraProviders);
+        const copyFactories = (factories, to) => factories.forEach(factory => {
+            to[factory.providerName] = factory.value;
+        });
 
-            const injectProviders = _provider[INJECT]();
+        if (_provider[CONSTRUCT]) {
 
-            const waitForFactories = injectProviders.filter(hasExclamationMark).map(providerName => {
-                const name = providerName.substring(0, providerName.length - 1);
-                let factory = getServiceFactory(name);
-                if (typeof factory === 'function') {
-                    factory = factory();
-                }
-                return Promise.resolve(factory).then(value => {
-                    return {
-                        providerName,
-                        value
-                    };
+            const getServiceFactory = name => initializedServices[name] || app.factory(name, SERVICE);
+            const constructProviders = _provider[CONSTRUCT]();
+            const createInstance = (fn) => Reflect.construct(fn, constructProviders.map(getServiceFactory));
+            const constructFactories = waitForAndCallFactories(
+                constructProviders.filter(isExclamizedName),
+                getServiceFactory);
+
+            if (constructFactories.length) {
+                instance = Promise.all(constructFactories).then(factories => {
+                    copyFactories(factories, initializedServices);
+                    return createInstance(_provider);
                 });
-            });
-
-            if (waitForFactories.length) {
-
-                instance = Promise.all(waitForFactories).then(factories => {
-
-                    const resolvedFactories = {};
-                    factories.forEach(factory => {
-                        resolvedFactories[factory.providerName] = factory.value;
-                    });
-
-                    const args = injectProviders.map((providerName) => resolvedFactories[providerName] || getServiceFactory(providerName));
-                    return Reflect.construct(_provider, args);
-
-                });
-
             } else {
-
-                instance = Reflect.construct(_provider, injectProviders.map(getServiceFactory));
-
+                instance = createInstance(_provider);
             }
 
         } else {
@@ -59,6 +62,47 @@ export default function constructEntity (provider, extraProviders) {
         }
 
         instance = Promise.resolve(instance);
+
+        if (_provider[INJECT]) {
+
+            const initializedComponents = {};
+            const getComponentFactory = name => initializedComponents[name] || app.factory(name, COMPONENT);
+            const injectProviders = _provider[INJECT]();
+
+            if (injectProviders.length) {
+                instance = instance.then(entity => {
+
+                    const injectFactories = waitForAndCallFactories(
+                        injectProviders.filter(name => hasExclamationMark(name) && !initializedComponents[name]),
+                        getComponentFactory,
+                        { [PARENT_SERVICE]: entity });
+
+                    if (injectFactories.length) {
+                        return Promise.all([entity, Promise.all(injectFactories)]).then(value => {
+                            copyFactories(value[1], initializedComponents);
+                            return value[0];
+                        });
+                    } else {
+                        return entity;
+                    }
+
+                }).then(entity => {
+
+                    injectProviders.forEach(providerName => {
+                        const name = hasExclamationMark(providerName) ? getPlainName(providerName) : providerName;
+                        Object.defineProperty(entity, name, {
+                            value: getComponentFactory(providerName)
+                        });
+                    });
+
+                    return entity;
+                });
+            }
+
+        }
+
+        // TODO
+        //    call to Compoment#afterInitialized() after injection
 
     } else {
         instance = _provider;

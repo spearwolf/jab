@@ -15,12 +15,12 @@ Usage Example (*work in progress*):
     App.Component(Foo, {  // A Component is like an ordinary class, you can create multiple entities from it
                           // (an Entity is an instance of a Component)
 
-        construct: ['plah', 'data!'],  // Define the services which shall be used as arguments for Foo constructor
-                                       // data has an exclamation mark, so the construction of Foo will be delayed
-                                       // until 'data' is resolved
+        construct: ['plah', 'data!'],   // Define the services which shall be used as arguments for Foo constructor
+                                        // data has an exclamation mark, so the construction of Foo will be delayed
+                                        // until 'data' is resolved
 
-        inject: ['bar'],  // After object creation, add (create) these Components as properties to our object
-        
+        inject: ['bar', 'fooBar!'],     // After object creation, add (create) these Components as properties to our object
+
         // Remember: construct services & inject components
 
         provider: {  // our Component has some extra providers which are not defined in the App
@@ -38,9 +38,7 @@ Usage Example (*work in progress*):
     // without any annotations a class will be act as Service (which is a Compoment singelton)
 
     class Bar {
-        constructor (parent) {
-            this.foo = parent;
-
+        constructor () {
             return new Promise(resolve => setTimeout(resolve(this), 4));
         }
         // ooops, our constructor returns a Promise!
@@ -48,15 +46,26 @@ Usage Example (*work in progress*):
         // the Promise is resolved (with an instance of Bar as value)
     }
 
-    App.Service(Bar, { construct: ['parent'] });  // Foo asks for 'bar' after object creation,
-                                                  // so *parent* will be an instance of Foo in this case.
+    App.Component(Bar);
+
+
+    class FooBar {
+        constructor (parent) {
+            this.foo = parent;
+        }
+    }
+
+    App.Service(FooBar, { construct: ['parent'] })  // Foo asks for 'fooBar' after object creation,
+                                                    // so *parent* will be an instance of Foo in this case,
+                                                    // otherwise *parent* will be null
 
 
     const app = new App({
         provider: {
-            foo: Foo,
-            plah: Plah,
-            bar: Bar,
+            foo    : Foo,
+            plah   : Plah,
+            bar    : Bar,
+            fooBar : FooBar
         }
     });
 
@@ -68,9 +77,11 @@ Usage Example (*work in progress*):
 
         console.log(foo.data);  // log json data
 
-        foo.bar().then(bar => {  // initialize Service Bar
+        foo.bar().then(bar => {  // create a new Bar entity
             // do something fantastic with bar
         });
+
+        console.log(foo.fooBar);  // fooBar is an initialized FooBar entity
 
     });
 

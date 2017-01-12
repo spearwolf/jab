@@ -16,7 +16,7 @@ class ServiceA {
     }
 }
 
-App.Service(ServiceA, { inject: ['b'] });
+App.Service(ServiceA, { construct: ['b'] });
 
 class ServiceB {
     constructor () {
@@ -37,7 +37,7 @@ class ServiceC {
     }
 }
 
-App.Service(ServiceC, { inject: ['d!'] });
+App.Service(ServiceC, { construct: ['d!'] });
 
 class ServiceD {
     constructor () {

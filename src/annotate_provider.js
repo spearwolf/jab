@@ -1,8 +1,11 @@
-import { COMPONENT_TYPE, INJECT, PROVIDER } from './constants';
+import { COMPONENT_TYPE, CONSTRUCT, INJECT, PROVIDER } from './constants';
 
 export default function annotateProvider (provider, componentType, options) {
     provider[COMPONENT_TYPE] = componentType;
     if (options) {
+        if (Array.isArray(options.construct)) {
+            provider[CONSTRUCT] = () => options.construct;
+        }
         if (Array.isArray(options.inject)) {
             provider[INJECT] = () => options.inject;
         }

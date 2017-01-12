@@ -6,14 +6,14 @@ class ServiceA {
         this.app = app;
     }
 }
-App.Service(ServiceA, { inject: ['app'] });
+App.Service(ServiceA, { construct: ['app'] });
 
 class ServiceB {
     constructor (app) {
         this.app = app;
     }
 }
-App.Service(ServiceB, { inject: ['app'] });
+App.Service(ServiceB, { construct: ['app'] });
 
 class ServiceC {
     constructor (app, a) {
@@ -21,7 +21,7 @@ class ServiceC {
         this.a = a();
     }
 }
-App.Service(ServiceC, { inject: ['app', 'a'] });
+App.Service(ServiceC, { construct: ['app', 'a'] });
 
 class ServiceD {
     constructor (app, a, c) {
@@ -30,7 +30,7 @@ class ServiceD {
         this.c = c();
     }
 }
-App.Service(ServiceD, { inject: ['app', 'a', 'c'], provider: { a: ServiceB, x: ServiceA }});
+App.Service(ServiceD, { construct: ['app', 'a', 'c'], provider: { a: ServiceB, x: ServiceA }});
 
 
 describe('Hierachical provider dependency injection example', () => {

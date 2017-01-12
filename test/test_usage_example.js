@@ -17,11 +17,11 @@ describe('Usage Example', () => {
     App.Component(Foo, {  // a Component is like an ordinary class, you can create multiple entities from it
                           // (an entity is a instance of a Component)
 
-        inject: ['plah', 'data!'],  // specify the arguments for the Foo constructor
+        construct: ['plah', 'data!'],  // specify the arguments for the Foo constructor
                                        // data has an exclamation mark, so the construction of Foo will be delayed
                                        // until 'data' is resolved
 
-        //inject: ['bar'],  // after object creation, add more properties to our new object
+        inject: ['bar', 'fooBar!'],  // after object creation, add more properties to our new object
 
         provider: {  // our component has some extra providers which are not defined in the App
                      // providers are hierachical so they can override providers with same name from the App
@@ -38,9 +38,7 @@ describe('Usage Example', () => {
     // without any annotations a class will be act as Service (which is a Compoment singelton)
 
     class Bar {
-        constructor (parent) {
-            this.foo = parent;
-
+        constructor () {
             return new Promise(resolve => setTimeout(resolve(this), 4));
         }
         // ooops, our constructor returns a Promise!
@@ -48,15 +46,24 @@ describe('Usage Example', () => {
         // is resolved (with an instance of Bar as value)
     }
 
-    App.Service(Bar, { construct: ['parent'] });  // Foo asks for 'bar' after object creation,
-                                                  // so *parent* will be an instance of Foo in this case.
+    App.Component(Bar);
 
+
+    class FooBar {
+        constructor (parent) {
+            this.foo = parent;
+        }
+    }
+
+    App.Component(FooBar, { construct: ['parent'] });   // Foo asks for 'fooBar' after object creation,
+                                                        // so *parent* will be an instance of Foo in this case.
 
     const app = new App({
         provider: {
             foo: Foo,
             plah: Plah,
-            //bar: Bar,
+            bar: Bar,
+            fooBar: FooBar,
         }
     });
 
@@ -84,12 +91,29 @@ describe('Usage Example', () => {
 
             return foo;
         })
-        //.then(foo => {
-            //assert.equal(typeof foo.bar, 'function');
-            //return foo.bar().then(bar => {
-                //assert(bar instanceof Bar);
-            //});
-        //})
+        .then(foo => {
+
+            assert.equal(typeof foo.bar, 'function');
+
+            return foo.bar().then(bar => {
+
+                assert(bar instanceof Bar);
+
+                return foo;
+            });
+        })
+        .then(foo => {
+
+            assert(foo.fooBar instanceof FooBar);
+            assert.equal(foo.fooBar.foo, foo);
+
+        })
+    );
+
+    it('create entity fooBar', () => app.createEntity('fooBar')
+        .then(fooBar => {
+            assert.equal(fooBar.foo, null);
+        })
     );
 
 });

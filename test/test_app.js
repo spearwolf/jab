@@ -13,7 +13,7 @@ class Plah {
         this.secret = secret;
     }
 }
-App.Component(Plah, { inject: ['secret!'] });
+App.Component(Plah, { construct: ['secret!'] });
 
 describe('App', () => {
 

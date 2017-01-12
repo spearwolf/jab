@@ -1,4 +1,4 @@
-import { COMPONENT, SERVICE, APP_SERVICE } from './constants';
+import { COMPONENT, SERVICE, APP_SERVICE, PARENT_SERVICE } from './constants';
 import createFactory from './create_factory';
 import annotateProvider from './annotate_provider';
 import ProviderCollection from './provider_collection';
@@ -33,6 +33,7 @@ export default class App {
         if (hasOptions) {
             this.providers.addProviders(options.provider);
         }
+        Object.freeze(this);  // prevent anybody from adding custom props to app. please use the app api instead!
     }
 
     /**
@@ -62,23 +63,34 @@ export default class App {
      */
     factory (name, type = COMPONENT) {
 
-        let factory;
         if (name === APP_SERVICE) {
-            factory = this;
-        } else {
-
-            const factories = this.factories[type];
-            factory = factories.get(name);
-
-            if (factory === undefined) {
-                factory = createFactory(this, name, type);
-                factories.set(name, factory);
-            }
+            return this;
         }
 
-        return factory;
+        try {
+            return findOrCreateFactory(this, name, type);
 
+        } catch (err) {
+            if (name === PARENT_SERVICE) {
+                return null;
+            }
+            throw err;
+        }
     }
+
+}
+
+function findOrCreateFactory (app, name, type) {
+
+    const factories = app.factories[type];
+    let factory = factories.get(name);
+
+    if (factory === undefined) {
+        factory = createFactory(app, name, type);
+        factories.set(name, factory);
+    }
+
+    return factory;
 
 }
 
