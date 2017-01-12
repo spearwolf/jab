@@ -15,12 +15,12 @@ Usage Example (*work in progress*):
     App.Component(Foo, {  // A Component is like an ordinary class, you can create multiple entities from it
                           // (an Entity is an instance of a Component)
 
-        construct: ['plah', 'data!'],   // Define the services which shall be used as arguments for Foo constructor
-                                        // data has an exclamation mark, so the construction of Foo will be delayed
-                                        // until 'data' is resolved
+        construct: ['plah', 'data!'], // Define the services which shall be used as arguments for Foo constructor
+                                      // data has an exclamation mark, so the construction of Foo will be delayed
+                                      // until 'data' is resolved
 
-        inject: ['bar', 'fooBar!'],     // After object creation, add (create) these Components
-                                        // as properties to our object
+        inject: ['bar', 'fooBar!'],  // After object creation, add (create) these Components
+                                     // as properties to our object
 
         // Remember: construct services & inject components
 
