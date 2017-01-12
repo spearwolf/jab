@@ -19,7 +19,8 @@ Usage Example (*work in progress*):
                                         // data has an exclamation mark, so the construction of Foo will be delayed
                                         // until 'data' is resolved
 
-        inject: ['bar', 'fooBar!'],     // After object creation, add (create) these Components as properties to our object
+        inject: ['bar', 'fooBar!'],     // After object creation, add (create) these Components
+                                        // as properties to our object
 
         // Remember: construct services & inject components
 
