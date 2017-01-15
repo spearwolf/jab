@@ -5,6 +5,8 @@ export const SERVICE = 'service';
 export const APP_SERVICE = 'app';
 export const PARENT_SERVICE = 'parent';
 
+export const AFTER_INITIALIZED = 'afterInitialized';
+
 export const COMPONENT_TYPE = Symbol('componentType');
 export const INJECT = Symbol('inject');
 export const CONSTRUCT = Symbol('construct');

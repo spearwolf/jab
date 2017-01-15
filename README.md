@@ -45,6 +45,13 @@ Usage Example (*work in progress*):
         // ooops, our constructor returns a Promise!
         // this will tell our App to wait for the Service initialization until
         // the Promise is resolved (with an instance of Bar as value)
+
+        afterInitialized () {               // will be called after object construction
+            console.log('4ms later..');
+            return new Promise(resolve => setTimeout(resolve(this), 4));
+                                            // returning a Promise is optional but very helpful
+                                            // if you want to do some async stuff after init
+        }
     }
 
     App.Component(Bar);
@@ -79,7 +86,7 @@ Usage Example (*work in progress*):
         console.log(foo.data);  // log json data
 
         foo.bar().then(bar => {  // create a new Bar entity
-            // do something fantastic with bar
+            // [8ms later] do something fantastic with bar
         });
 
         console.log(foo.fooBar);  // fooBar is an initialized FooBar entity

@@ -35,7 +35,7 @@ describe('Usage Example', () => {
 
     class Plah { }
     // no annotations here!
-    // without any annotations a class will be act as Service (which is a Compoment singelton)
+    // without any annotations a class will be act as Service (which is a Component singelton)
 
     class Bar {
         constructor () {

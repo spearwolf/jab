@@ -1,19 +1,21 @@
 import App from './app';
-import { PARENT_SERVICE, SERVICE, COMPONENT, CONSTRUCT, INJECT, PROVIDER } from './constants';
+import { PARENT_SERVICE, SERVICE, COMPONENT, CONSTRUCT, INJECT, PROVIDER, AFTER_INITIALIZED } from './constants';
 import hasExclamationMark from './has_exclamation_mark';
 
-const getPlainName = name => name === PARENT_SERVICE ? name : name.substring(0, name.length - 1);
+const resolve = (value) => value && typeof value.then === 'function' ? value : Promise.resolve(value);
+
+const plainName = name => name.substring(0, name.length - 1);
 const isExclamizedName = (name) => hasExclamationMark(name) || name === PARENT_SERVICE;
 
 const waitForAndCallFactories = (providers, getFactory, extraOptions) =>
     providers
         .map(providerName => {
-            const name = hasExclamationMark(providerName) ? getPlainName(providerName) : providerName;
+            const name = hasExclamationMark(providerName) ? plainName(providerName) : providerName;
             let factory = getFactory(name);
             if (typeof factory === 'function') {
                 factory = factory(extraOptions);
             }
-            return Promise.resolve(factory).then(value => {
+            return resolve(factory).then(value => {
                 return {
                     providerName,
                     value
@@ -61,7 +63,7 @@ export default function constructEntity (provider, extraProviders) {
             instance = new _provider;
         }
 
-        instance = Promise.resolve(instance);
+        instance = resolve(instance);
 
         if (_provider[INJECT]) {
 
@@ -89,7 +91,7 @@ export default function constructEntity (provider, extraProviders) {
                 }).then(entity => {
 
                     injectProviders.forEach(providerName => {
-                        const name = hasExclamationMark(providerName) ? getPlainName(providerName) : providerName;
+                        const name = hasExclamationMark(providerName) ? plainName(providerName) : providerName;
                         Object.defineProperty(entity, name, {
                             value: getComponentFactory(providerName)
                         });
@@ -101,8 +103,14 @@ export default function constructEntity (provider, extraProviders) {
 
         }
 
-        // TODO
-        //    call to Compoment#afterInitialized() after injection
+        instance = instance.then(entity => {
+            const fn = entity[AFTER_INITIALIZED];
+            if (typeof fn === 'function') {
+                return resolve(fn.call(entity)).then(() => entity);
+            } else {
+                return entity;
+            }
+        });
 
     } else {
         instance = _provider;
