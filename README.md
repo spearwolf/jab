@@ -1,3 +1,5 @@
+> aysnc dependency injections and components on steroids for es2015+ javascript applications!
+
 
 Usage Example (*work in progress*):
 
