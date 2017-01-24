@@ -1,18 +1,24 @@
 import { COMPONENT_TYPE, CONSTRUCT, INJECT, PROVIDER } from './constants';
 
 export default function annotateProvider (provider, componentType, options) {
+
     provider[COMPONENT_TYPE] = componentType;
+
     if (options) {
-        if (Array.isArray(options.construct)) {
-            provider[CONSTRUCT] = () => options.construct;
+
+        if (options.construct != null) {
+            provider[CONSTRUCT] = Promise.resolve(options.construct);
         }
-        if (Array.isArray(options.inject)) {
-            provider[INJECT] = () => options.inject;
+
+        if (options.inject != null) {
+            provider[INJECT] = Promise.resolve(options.inject);
         }
-        if (typeof options.provider === 'object') {
+
+        if (options.provider != null) {
             provider[PROVIDER] = options.provider;
         }
+
     }
+
     return provider;
 }
-
