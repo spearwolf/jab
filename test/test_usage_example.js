@@ -67,14 +67,25 @@ describe('Usage Example', () => {
         }
     });
 
+
+    const check = cb => {
+        return value => {
+            let res = cb(value);
+            if (res && res.then) {
+                return res.then(() => value);
+            } else {
+                return value;
+            }
+        };
+    };
+
     it('create entity foo', () => app.createEntity('foo')
-        .then(foo => {
+        .then(check(foo => {
 
             assert(foo instanceof Foo);
 
-            return foo;
-        })
-        .then(foo => {
+        }))
+        .then(check(foo => {
 
             assert.equal(typeof foo.plah, 'function');
 
@@ -82,16 +93,14 @@ describe('Usage Example', () => {
 
                 assert(plah instanceof Plah);
 
-                return foo;
             });
-        })
-        .then(foo => {
+        }))
+        .then(check(foo => {
 
             assert.equal(foo.data && foo.data.url, 'https://example.com/123.json');
 
-            return foo;
-        })
-        .then(foo => {
+        }))
+        .then(check(foo => {
 
             assert.equal(typeof foo.bar, 'function');
 
@@ -99,15 +108,14 @@ describe('Usage Example', () => {
 
                 assert(bar instanceof Bar);
 
-                return foo;
             });
-        })
-        .then(foo => {
+        }))
+        .then(check(foo => {
 
             assert(foo.fooBar instanceof FooBar);
             assert.equal(foo.fooBar.foo, foo);
 
-        })
+        }))
     );
 
     it('create entity fooBar', () => app.createEntity('fooBar')
