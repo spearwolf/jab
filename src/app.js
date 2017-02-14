@@ -33,7 +33,6 @@ export default class App {
         if (hasOptions) {
             this.providers.addProviders(options.provider);
         }
-        Object.freeze(this);  // prevent anybody from adding custom props to app. please use the app api instead!
     }
 
     /**

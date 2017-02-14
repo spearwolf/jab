@@ -1,7 +1,7 @@
 {
   "name": "@spearwolf/jab",
   "description": "a smart and async dependency injection framework for modern javascript apps",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "main": "dist/bundle.js",
   "jsnext:main": "dist/bundle.es6.js",
   "module": "dist/bundle.es6.js",
