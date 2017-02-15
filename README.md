@@ -1,6 +1,6 @@
 > aysnc dependency injections and components on steroids for es2015+ javascript applications!
 
-*work in progress*
+[![bitHound Overall Score](https://www.bithound.io/github/spearwolf/jab/badges/score.svg)](https://www.bithound.io/github/spearwolf/jab)
 
 ### Usage Example:
 
@@ -51,7 +51,7 @@
 
         afterInitialized () {               // [optional] will be called after object construction
             console.log('4ms later..');
-            
+
             return new Promise(resolve => setTimeout(resolve(this), 4));
                                             // returning a Promise is optional but very helpful
                                             // when you want to do some async stuff here
