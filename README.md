@@ -2,6 +2,8 @@
 
 [![bitHound Overall Score](https://www.bithound.io/github/spearwolf/jab/badges/score.svg)](https://www.bithound.io/github/spearwolf/jab)
 
+[![Build Status](https://img.shields.io/travis/spearwolf/jab.svg)](https://travis-ci.org/spearwolf/jab)
+
 ### Install
 
 *jab* can be installed using npm:
