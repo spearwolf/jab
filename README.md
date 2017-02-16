@@ -2,9 +2,18 @@
 
 [![bitHound Overall Score](https://www.bithound.io/github/spearwolf/jab/badges/score.svg)](https://www.bithound.io/github/spearwolf/jab)
 
+### Install
+
+*jab* can be installed using npm:
+
+```bash
+npm install spearwolf/jab
+```
+
 ### Usage Example:
 
 ```javascript
+    import { App } from '@spearwolf/jab';
 
     class Foo {
 
