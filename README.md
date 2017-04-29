@@ -76,7 +76,7 @@ npm install spearwolf/jab
         }
     }
 
-    App.Service(FooBar, { construct: ['parent'] })  // Foo asks for 'fooBar' after object creation,
+    App.Component(FooBar, { construct: ['parent'] })  // Foo asks for 'fooBar' after object creation,
                                                     // so *parent* will be an instance of Foo in this case,
                                                     // otherwise *parent* will be null
 
